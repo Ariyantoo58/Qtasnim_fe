@@ -8,7 +8,6 @@ import {
 	Button,
 	CardBody,
 	Card,
-	CardFooter,
 	Modal,
 	ModalHeader,
 	ModalBody,
@@ -16,24 +15,18 @@ import {
 	Input,
 } from "reactstrap";
 import { Plus } from "react-feather";
-import ReactPaginate from "react-paginate";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Select from "react-select";
 
 export default function Products() {
-	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
 	const [name, setName] = useState("");
 	const [stock, setStock] = useState("");
 	const [type, setType] = useState("");
 	const [item, setItem] = useState({});
-	const [currentPage, setCurrentPage] = useState(1);
 	const [data, setData] = useState([]);
 	const [jenis, setJenis] = useState("konsumsi");
-
-	const getCurrentStage = () => {};
 
 	const getProducts = async () => {
 		const response = await axios.get("http://localhost:8001/products");
