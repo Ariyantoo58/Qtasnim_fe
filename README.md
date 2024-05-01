@@ -1,4 +1,4 @@
-# express-sequelize-mysql-boilerplate
+# Reactjs Admin Dashboard
 This is a ready to start React Js with vite
 1. To install application, open the terminal and go into the given code's root directory and execute below command
 ```
