@@ -1,109 +1,90 @@
+// ** Reactstrap Imports
+import { Card, CardHeader, CardTitle, CardBody, Badge } from "reactstrap";
+
 // ** Third Party Components
-import { Calendar } from "react-feather";
-import Flatpickr from "react-flatpickr";
+import { ArrowDown } from "react-feather";
 import {
-	AreaChart,
-	Area,
+	LineChart,
+	Line,
 	XAxis,
 	YAxis,
 	CartesianGrid,
 	Tooltip,
 	ResponsiveContainer,
-	LineChart,
 } from "recharts";
-
-// ** Reactstrap Imports
-import { Card, CardHeader, CardTitle, CardBody } from "reactstrap";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import Select from "react-select";
-import moment from "moment";
 
 // ** Chart Data
-// const data = [
-// 	{
-// 		name: "7/12",
-// 		sales: 20,
-// 	},
-// 	{
-// 		name: "8/12",
-// 		sales: 40,
-// 	},
-// 	{
-// 		name: "9/12",
-// 		sales: 30,
-// 	},
-// 	{
-// 		name: "10/12",
-// 		sales: 70,
-// 	},
-// 	{
-// 		name: "11/12",
-// 		sales: 40,
-// 	},
-// 	{
-// 		name: "12/12",
-// 		sales: 60,
-// 	},
-// 	{
-// 		name: "13/12",
-// 		sales: 50,
-// 	},
-// 	{
-// 		name: "14/12",
-// 		sales: 140,
-// 	},
-// 	{
-// 		name: "15/12",
-// 		sales: 120,
-// 	},
-// 	{
-// 		name: "16/12",
-// 		sales: 100,
-// 	},
-// 	{
-// 		name: "17/12",
-// 		sales: 140,
-// 	},
-// 	{
-// 		name: "18/12",
-// 		sales: 180,
-// 	},
-// 	{
-// 		name: "19/12",
-// 		sales: 220,
-// 	},
-// ];
+const data = [
+	{
+		name: "7/12",
+		pv: 280,
+	},
+	{
+		name: "8/12",
+		pv: 200,
+	},
+	{
+		name: "9/12",
+		pv: 220,
+	},
+	{
+		name: "10/12",
+		pv: 180,
+	},
+	{
+		name: "11/12",
+		pv: 270,
+	},
+	{
+		name: "12/12",
+		pv: 250,
+	},
+	{
+		name: "13/12",
+		pv: 70,
+	},
+	{
+		name: "14/12",
+		pv: 90,
+	},
+	{
+		name: "15/12",
+		pv: 200,
+	},
+	{
+		name: "16/12",
+		pv: 150,
+	},
+	{
+		name: "17/12",
+		pv: 160,
+	},
+	{
+		name: "18/12",
+		pv: 100,
+	},
+	{
+		name: "19/12",
+		pv: 150,
+	},
+	{
+		name: "20/12",
+		pv: 100,
+	},
+	{
+		name: "21/12",
+		pv: 50,
+	},
+];
 
-const CustomTooltip = (data) => {
-	console.log(data, "dataa");
-	if (data.active && data.payload) {
+const CustomTooltip = ({ active, payload }) => {
+	if (active && payload) {
 		return (
 			<div className="recharts-custom-tooltip">
-				<p className="fw-bold mb-0">{data.label}</p>
-				<p className="fw-bold mb-0">#ID TS-{data.payload[0]?.payload.id}</p>
-				<p className="fw-bold mb-0">
-					Tanggal{" "}
-					{moment(data.payload[0]?.payload.tanggal).format("DD-MM-YYYY")}
-				</p>
-				<hr />
-				<div className="active">
-					{data.payload.map((i) => {
-						return (
-							<div className="d-flex align-items-center" key={i.dataKey}>
-								<span
-									className="bullet bullet-sm bullet-bordered me-50"
-									style={{
-										backgroundColor: i.fill,
-									}}
-								></span>
-								<span className="text-capitalize me-75">
-									{i.dataKey} : {i.payload[i.dataKey]}
-								</span>
-							</div>
-						);
-					})}
-				</div>
+				<span>{`${payload[0].value}%`}</span>
 			</div>
 		);
 	}
@@ -111,121 +92,34 @@ const CustomTooltip = (data) => {
 	return null;
 };
 
-const SimpleAreaChart = () => {
-	const [data, setData] = useState();
-	const getTransactions = async () => {
-		const response = await axios.get(
-			"http://localhost:8001/transactions/grouping"
-		);
-
-		const dataMap = response.data.data.map(
-			({ jumlah, product, transaksi }) => ({
-				name: product.name,
-				terjual: jumlah,
-				...transaksi,
-			})
-		);
-		setData(dataMap);
-	};
-
-	const handleType = async (e) => {
-		const response = await axios.get(
-			`http://localhost:8001/transactions/grouping?type=${e.value}`
-		);
-		console.log(response, "responsed");
-		const dataMap = response.data.data.map(
-			({ jumlah, product, transaksi }) => ({
-				name: product.name,
-				terjual: jumlah,
-				...transaksi,
-			})
-		);
-		setData(dataMap);
-	};
-
-	const handlePicker = async (e) => {
-		const response = await axios.get(
-			`http://localhost:8001/transactions/grouping?from=${e[0]}&to=${e[1]}`
-		);
-		console.log(e, "responsed");
-		const dataMap = response.data.data.map(
-			({ jumlah, product, transaksi }) => ({
-				name: product.name,
-				terjual: jumlah,
-				...transaksi,
-			})
-		);
-		setData(dataMap);
-	};
-
-	useEffect(() => {
-		getTransactions();
-	}, []);
+const SimpleLineChart = ({ warning }) => {
 	return (
 		<Card>
-			<CardHeader className="flex-sm-row flex-column justify-content-sm-between justify-content-center align-items-sm-center align-items-start">
-				<CardTitle tag="h4">Data Terjual</CardTitle>
+			<CardHeader>
 				<div>
-					<Select
-						options={[
-							{
-								value: "MAX",
-								label: "Terjual Terbanyak",
-							},
-							{
-								value: "MIN",
-								label: "Terjual Tersedikit",
-							},
-						]}
-						defaultValue={[
-							{
-								value: "MAX",
-								label: "Terjual Terbanyak",
-							},
-						]}
-						onChange={(e) => handleType(e)}
-					/>
+					<CardTitle tag="h4">Balance</CardTitle>
+					<small className="text-muted">
+						Commercial networks & enterprises
+					</small>
 				</div>
-				<div className="d-flex align-items-center">
-					<Calendar size={15} />
-					<Flatpickr
-						className="form-control flat-picker bg-transparent border-0 shadow-none"
-						onChange={(e) => handlePicker(e)}
-						options={{
-							mode: "range",
-							// eslint-disable-next-line no-mixed-operators
-							defaultDate: [
-								new Date(),
-								new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),
-							],
-						}}
-					/>
+				<div className="d-flex align-items-center flex-wrap mt-sm-0 mt-1">
+					<h5 className="fw-bold mb-0 me-1">$ 100,000</h5>
+					<Badge className="badge-md" color="light-secondary">
+						<ArrowDown className="text-danger me-50" size={15} />
+						20%
+					</Badge>
 				</div>
 			</CardHeader>
 
 			<CardBody>
-				<div className="d-flex align-items-center mb-2">
-					<div className="me-2">
-						<span
-							className="bullet bullet-sm bullet-bordered me-50"
-							style={{ backgroundColor: "rgba(115, 103, 240, .5)" }}
-						></span>
-						<span className="align-middle me-75">Penjualan</span>
-					</div>
-				</div>
 				<div className="recharts-wrapper">
 					<ResponsiveContainer>
-						<LineChart height={400} data={data}>
+						<LineChart height={300} data={data}>
 							<CartesianGrid />
 							<XAxis dataKey="name" />
 							<YAxis />
 							<Tooltip content={CustomTooltip} />
-							<Area
-								dataKey="terjual"
-								stackId="terjual"
-								stroke="0"
-								fill="rgba(115, 103, 240, .5)"
-							/>
+							<Line dataKey="pv" stroke={warning} strokeWidth={3} />
 						</LineChart>
 					</ResponsiveContainer>
 				</div>
@@ -233,4 +127,4 @@ const SimpleAreaChart = () => {
 		</Card>
 	);
 };
-export default SimpleAreaChart;
+export default SimpleLineChart;
